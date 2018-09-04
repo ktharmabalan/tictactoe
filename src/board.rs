@@ -19,6 +19,7 @@ pub struct Board {
   width: i32,
   height: i32,
   tiles: HashMap<String, Tile>,
+  tile_size: f32,
 }
 
 impl Board {
@@ -26,15 +27,15 @@ impl Board {
     let border_count = rows + 1;
     let border_ratio = 0.1;
     let offsetsize = border_count as f32 * border_ratio;
-    let tilesize = (width as f32 - (offsetsize)) / rows as f32;
-    // println!("width {}, rows {}, tilesize {}, bordercount {}, offsetsize {}", width,  rows, tilesize, border_count, offsetsize);
+    let tile_size = (width as f32 - (offsetsize)) / rows as f32;
+    println!("width {}, rows {}, tile_size {}, bordercount {}, offsetsize {}", width,  rows, tile_size, border_count, offsetsize);
 
     let mut tiles = HashMap::new();
     let mut key = String::from("");
     for row in 0 .. rows {
       for col in 0 .. cols {
         key = format!("{}:{}", row, col);
-        tiles.insert(key, Tile::new(row, col, tilesize as f64, border_ratio as f64));
+        tiles.insert(key, Tile::new(row, col, tile_size as f64, border_ratio as f64));
       }
     }
 
@@ -44,10 +45,11 @@ impl Board {
       width,
       height,
       tiles,
+      tile_size,
     }
   }
 
-  pub fn draw(&self, con: &Context, g: &mut G2d) {
+  pub fn draw(&mut self, con: &Context, g: &mut G2d, x: f32, y: f32, clicked: bool) {
     rectangle(
       BOARD_COLOR,
       [
@@ -59,8 +61,28 @@ impl Board {
       con.transform,
       g,
     );
-    
-    for (_key, tile) in &self.tiles {
+
+    for (_key, tile) in &mut self.tiles {
+      // if tile.row  >= x && x <= (tile.row * tile.tile_size) * GAME_SIZE {
+      if clicked {
+        // println!("{}, {}", x as f64 / GAME_SIZE, y as f64 / GAME_SIZE);
+        // if (tile.row as f64 * tile.tile_size * GAME_SIZE) + (tile.offset_size * GAME_SIZE * ((tile.row + 1) as f64)) >= x as f64
+        //   && ((tile.row + 2) as f64 * tile.tile_size * GAME_SIZE) + (tile.offset_size * GAME_SIZE * ((tile.row + 2) as f64)) <= x as f64
+        //   // && (tile.tile_size * GAME_SIZE) <= x as f64
+        //   && (tile.col as f64 * tile.tile_size * GAME_SIZE) + (tile.offset_size * GAME_SIZE * ((tile.col + 1) as f64)) >= y as f64
+        //   && ((tile.col + 2) as f64 * tile.tile_size * GAME_SIZE) + (tile.offset_size * GAME_SIZE * ((tile.col + 2) as f64)) >= y as f64 {
+        //   // && (tile.tile_size * GAME_SIZE) <= y as f64 {
+        if 
+          (x / self.tile_size) as f64 / GAME_SIZE > tile.row as f64
+          && (x / self.tile_size) as f64 / GAME_SIZE < (tile.row + 1) as f64
+          && (y / self.tile_size) as f64 / GAME_SIZE > tile.col as f64
+          && (y / self.tile_size) as f64 / GAME_SIZE < (tile.col + 1) as f64
+          {
+          tile.clicked();
+        }
+        // let updateTile = &self.tiles.get(key).unwrap();
+        // updateTile.clicked();
+      }
       tile.draw(&con, g);
     }
 

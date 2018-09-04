@@ -1,11 +1,15 @@
 // Import piston
 use piston_window::{rectangle, Context, G2d};
 use piston_window::types::Color;
-// (34%, 21%, 0%, 73%)
+
+use board::Board;
+
 const GAME_COLOR: Color = [0.17, 0.21, 0.27, 1.0];
 
 // Moving period/restart time
+#[allow(dead_code)]
 const MOVING_PERIOD: f64 = 0.1; // lower for faster update, greater for slower update
+#[allow(dead_code)]
 const RESTART_TIME: f64 = 1.0;  // wait time in seconds
 
 pub const GAME_SIZE: f64 = 25.0;
@@ -18,24 +22,38 @@ pub fn to_coord_u32(game_coord: i32) -> u32 {
   to_coord(game_coord) as u32
 }
 
+#[allow(dead_code)]
 pub struct Game {
   width: i32,
   height: i32,
   game_over: bool,
   wait_time: f64,
+  board: Board,
 }
 
 impl Game {
   pub fn new(width: i32, height: i32) -> Game {
+    let (cols, rows) = (6, 6);
+
+    let board = Board::new(
+      0,
+      0,
+      width,
+      height,
+      cols,
+      rows,
+    );
+
     Game {
       wait_time: 0.0,
       game_over: false,
       width,
       height,
+      board,
     }
   }
 
-  pub fn draw(&self, con: &Context, g: &mut G2d) {
+  pub fn draw(&mut self, con: &Context, g: &mut G2d, x: f32, y: f32, clicked: bool) {
     rectangle(
       GAME_COLOR,
       [
@@ -49,5 +67,6 @@ impl Game {
       con.transform,
       g,
     );
+    self.board.draw(&con, g, x, y, clicked);
   }
 }
