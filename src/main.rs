@@ -9,6 +9,7 @@ use piston_window::types::Color;
 
 use game::Game;
 use game::to_coord_u32;
+use tile::TileState;
 
 const CLEAR_COLOR: Color = [0.0, 0.0, 0.0, 1.0];
 
@@ -27,6 +28,7 @@ fn main() {
   let mut clicked = false;
   let mut x = 0.0;
   let mut y = 0.0;
+  let mut player = TileState::Player1;
 
   while let Some(e) = window.next() {
     if let Some(pos) = e.mouse_cursor_args() {
@@ -44,8 +46,12 @@ fn main() {
 
     window.draw_2d(&e, |c, g| {
       clear(CLEAR_COLOR, g);
-      game.draw(&c, g, x, y, clicked);
-      if clicked {
+      if game.draw(&c, g, x, y, clicked, &mut player) {
+        player = match player {
+          TileState::Player1 => TileState::Player2,
+          TileState::Player2 => TileState::Player1,
+          _ => TileState::Player1,
+        };
         clicked = false;
       }
     });

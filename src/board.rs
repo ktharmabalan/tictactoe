@@ -4,10 +4,8 @@ use std::collections::HashMap;
 use piston_window::{rectangle, Context, G2d};
 use piston_window::types::Color;
 
-// mod tile;
-
 use game::GAME_SIZE;
-use tile::{ Tile };
+use tile::{ Tile, TileState };
 
 // const BOARD_COLOR: Color = [0.8, 0.0, 0.0, 1.0];
 const BOARD_COLOR: Color = [(34.0/255.0), (41.0/255.0), (71.0/255.0), 1.0];
@@ -18,6 +16,8 @@ pub struct Board {
   y: i32,
   width: i32,
   height: i32,
+  rows: i32,
+  cols: i32,
   tiles: HashMap<String, Tile>,
   tile_size: f32,
 }
@@ -44,12 +44,37 @@ impl Board {
       y,
       width,
       height,
+      rows,
+      cols,
       tiles,
       tile_size,
     }
   }
 
-  pub fn draw(&mut self, con: &Context, g: &mut G2d, x: f32, y: f32, clicked: bool) {
+  // fn check_win(&self, player: &mut TileState) {
+  //   let mut row1: Vec<i32> = Vec::new();
+  //   // let row2: Vec<i32> = Vec::new();
+  //   // let row3: Vec<i32> = Vec::new();
+  //   // let col1: Vec<i32> = Vec::new();
+  //   // let col2: Vec<i32> = Vec::new();
+  //   // let col3: Vec<i32> = Vec::new();
+  //   let mut key = String::from("");
+  //   for row in 0 .. self.rows {
+  //     for col in 0 .. self.cols {
+  //       key = format!("{}:{}", row, col);
+  //       if row == 1 {
+  //         if self.tiles[&key].tile_state == player {
+  //           row1.push(row);
+  //           if row1.len() == 3 {
+  //             println!("WIN");
+  //           }
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
+
+  pub fn draw(&mut self, con: &Context, g: &mut G2d, x: f32, y: f32, clicked: bool, player: &mut TileState) -> bool {
     rectangle(
       BOARD_COLOR,
       [
@@ -63,58 +88,21 @@ impl Board {
     );
 
     for (_key, tile) in &mut self.tiles {
-      // if tile.row  >= x && x <= (tile.row * tile.tile_size) * GAME_SIZE {
+      tile.draw(&con, g);
       if clicked {
-        // println!("{}, {}", x as f64 / GAME_SIZE, y as f64 / GAME_SIZE);
-        // if (tile.row as f64 * tile.tile_size * GAME_SIZE) + (tile.offset_size * GAME_SIZE * ((tile.row + 1) as f64)) >= x as f64
-        //   && ((tile.row + 2) as f64 * tile.tile_size * GAME_SIZE) + (tile.offset_size * GAME_SIZE * ((tile.row + 2) as f64)) <= x as f64
-        //   // && (tile.tile_size * GAME_SIZE) <= x as f64
-        //   && (tile.col as f64 * tile.tile_size * GAME_SIZE) + (tile.offset_size * GAME_SIZE * ((tile.col + 1) as f64)) >= y as f64
-        //   && ((tile.col + 2) as f64 * tile.tile_size * GAME_SIZE) + (tile.offset_size * GAME_SIZE * ((tile.col + 2) as f64)) >= y as f64 {
-        //   // && (tile.tile_size * GAME_SIZE) <= y as f64 {
         if 
           (x / self.tile_size) as f64 / GAME_SIZE > tile.row as f64
           && (x / self.tile_size) as f64 / GAME_SIZE < (tile.row + 1) as f64
           && (y / self.tile_size) as f64 / GAME_SIZE > tile.col as f64
           && (y / self.tile_size) as f64 / GAME_SIZE < (tile.col + 1) as f64
           {
-          tile.clicked();
+          let updated = tile.clicked(player);
+          // self.check_win(player);
+          return updated;
         }
-        // let updateTile = &self.tiles.get(key).unwrap();
-        // updateTile.clicked();
       }
-      tile.draw(&con, g);
     }
 
-    // let offset = (self.width as f64) * GAME_SIZE / 3.0;
-    // for i in 1..3 {
-    //   line(
-    //     // [(34/255) as f32, (41/255) as f32, (71/255) as f32, 1.0],
-    //     [(15/255) as f32, (20/255) as f32, (45/255) as f32, 1.0],
-    //     0.1 * GAME_SIZE,
-    //     [
-    //       offset * i as f64,
-    //       0.0,
-    //       offset * i as f64,
-    //       self.height as f64 * GAME_SIZE,
-    //     ],
-    //     con.transform,
-    //     g,
-    //   );
-
-    //   line(
-    //     [(34/255) as f32, (41/255) as f32, (71/255) as f32, 1.0],
-    //     // [(15/255) as f32, (20/255) as f32, (45/255) as f32, 1.0],
-    //     0.1 * GAME_SIZE,
-    //     [
-    //       0.0,
-    //       offset * i as f64,
-    //       self.width as f64 * GAME_SIZE,
-    //       offset * i as f64,
-    //     ],
-    //     con.transform,
-    //     g,
-    //   );
-    // }
+    false
   }
 }

@@ -3,6 +3,7 @@ use piston_window::{rectangle, Context, G2d};
 use piston_window::types::Color;
 
 use board::Board;
+use tile::TileState;
 
 const GAME_COLOR: Color = [0.17, 0.21, 0.27, 1.0];
 
@@ -33,7 +34,7 @@ pub struct Game {
 
 impl Game {
   pub fn new(width: i32, height: i32) -> Game {
-    let (cols, rows) = (6, 6);
+    let (cols, rows) = (3, 3);
 
     let board = Board::new(
       0,
@@ -53,7 +54,7 @@ impl Game {
     }
   }
 
-  pub fn draw(&mut self, con: &Context, g: &mut G2d, x: f32, y: f32, clicked: bool) {
+  pub fn draw(&mut self, con: &Context, g: &mut G2d, x: f32, y: f32, clicked: bool, player: &mut TileState) -> bool {
     rectangle(
       GAME_COLOR,
       [
@@ -67,6 +68,6 @@ impl Game {
       con.transform,
       g,
     );
-    self.board.draw(&con, g, x, y, clicked);
+    self.board.draw(&con, g, x, y, clicked, player)
   }
 }
