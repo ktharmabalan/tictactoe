@@ -10,18 +10,27 @@ const PLAYER2_TILE_COLOR: Color = [(15.0/255.0), (45.0/255.0), 0.75, 1.0];
 
 #[derive(Debug)]
 pub enum TileState {
-  None,
   Player1,
   Player2,
+  None,
 }
 
-impl PartialEq for TileState {
-  fn eq(&self, tile_state: &TileState) -> bool {
-    self == tile_state
+pub fn variant_eq(a: &TileState, b: &TileState) -> bool {
+  match (a, b) {
+    (&TileState::Player1, &TileState::Player1) => true,
+    (&TileState::Player2, &TileState::Player2) => true,
+    (&TileState::None, &TileState::None) => true,
+    _ => false,
   }
 }
 
-#[derive(PartialEq)]
+// impl PartialEq for TileState {
+//   fn eq(&self, tile_state: &TileState) -> bool {
+//     self == tile_state
+//   }
+// }
+
+// #[derive(PartialEq)]
 pub struct Tile {
   pub row: i32,
   pub col: i32,

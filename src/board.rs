@@ -5,7 +5,7 @@ use piston_window::{rectangle, Context, G2d};
 use piston_window::types::Color;
 
 use game::GAME_SIZE;
-use tile::{ Tile, TileState };
+use tile::{ Tile, TileState, variant_eq };
 
 // const BOARD_COLOR: Color = [0.8, 0.0, 0.0, 1.0];
 const BOARD_COLOR: Color = [(34.0/255.0), (41.0/255.0), (71.0/255.0), 1.0];
@@ -108,19 +108,50 @@ impl Board {
 
   pub fn check_win(&self, player: &TileState) {
     match player {
-      TileState::Player1 => {
-        // println!("{}", self.tiles[1].len());
-        // println!("{}", self.tiles[2].len());
-        // if self.tiles[0].len() == 3 && self.tiles[0].len() == 3 && self.tiles[0][0].tile_state == self.tiles[0][1].tile_state && self.tiles[0][0].tile_state ==self.tiles[0][2].tile_state {
-          // println!("{:?} WON", player);
-        // }
+      TileState::None => (),
+      _ => {
+        // col 1
+        let mut a = &self.tiles[0][0].tile_state;
+        let mut b = &self.tiles[0][1].tile_state;
+        let mut c = &self.tiles[0][2].tile_state;
+        // col 2
+        let mut d = &self.tiles[1][0].tile_state;
+        let mut e = &self.tiles[1][1].tile_state;
+        let mut f = &self.tiles[1][2].tile_state;
+        // col 3
+        let mut g = &self.tiles[2][0].tile_state;
+        let mut h = &self.tiles[2][1].tile_state;
+        let mut i = &self.tiles[2][2].tile_state;
+
+        // cols
+        if variant_eq(a, b) && variant_eq(a, c) && !variant_eq(a, &TileState::None) {
+          println!("{:?} COL 1", a);
+        }
+        if variant_eq(d, e) && variant_eq(d, f) && !variant_eq(d, &TileState::None) {
+          println!("{:?} COL 2", d);
+        }
+        if variant_eq(g, h) && variant_eq(g, i) && !variant_eq(g, &TileState::None) {
+          println!("{:?} COL 3", g);
+        }
+        // rows
+        if variant_eq(a, d) && variant_eq(a, g) && !variant_eq(a, &TileState::None) {
+          println!("{:?} ROW 1", a);
+        }
+        if variant_eq(b, e) && variant_eq(b, h) && !variant_eq(b, &TileState::None) {
+          println!("{:?} ROW 2", d);
+        }
+        if variant_eq(c, f) && variant_eq(c, i) && !variant_eq(c, &TileState::None) {
+          println!("{:?} ROW 3", g);
+        }
+        // Left top -> Right down
+        if variant_eq(a, e) && variant_eq(a, f) && !variant_eq(a, &TileState::None) {
+          println!("{:?} LEFT TO RIGHT 1", a);
+        }
+        // Right top -> Left down
+        if variant_eq(c, e) && variant_eq(c, i) && !variant_eq(c, &TileState::None) {
+          println!("{:?} RIGHT TO LEFT 1", a);
+        }
       },
-      TileState::Player2 => {
-        // if self.tiles[0].len() > 1 && self.tiles[0][0].tile_state == self.tiles[0][1].tile_state && self.tiles[0][0].tile_state ==self.tiles[0][2].tile_state {
-        //   println!("{:?} WON", player);
-        // }
-      },
-      _ => (),
     }
     // match player {
     //   TileState::Player1 => {
