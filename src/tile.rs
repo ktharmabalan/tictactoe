@@ -35,7 +35,8 @@ impl Tile {
     }
   }
 
-  pub fn clicked(&mut self, player: &TileState) -> bool {
+  pub fn clicked(&mut self, player: &TileState) {
+    println!("UPDATED");
     match self.tile_state {
       TileState::None => {
         self.clicked = true;
@@ -44,11 +45,9 @@ impl Tile {
           TileState::Player2 => TileState::Player2,
           _ => TileState::None,
         };
-        return true;
       },
       _ => (),
     }
-    false
   }
 
   pub fn draw(&self, con: &Context, g: &mut G2d) {
@@ -69,4 +68,7 @@ impl Tile {
       g,
     );
   }
+
+  // pub fn update(&mut self) {
+  // }
 }

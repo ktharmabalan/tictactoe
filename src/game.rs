@@ -54,7 +54,7 @@ impl Game {
     }
   }
 
-  pub fn draw(&mut self, con: &Context, g: &mut G2d, x: f32, y: f32, clicked: bool, player: &mut TileState) -> bool {
+  pub fn draw(&mut self, con: &Context, g: &mut G2d) {
     rectangle(
       GAME_COLOR,
       [
@@ -68,6 +68,22 @@ impl Game {
       con.transform,
       g,
     );
-    self.board.draw(&con, g, x, y, clicked, player)
+    self.board.draw(&con, g)
+  }
+
+  pub fn update(&mut self, delta_time: f64, x: f32, y: f32, clicked: bool, player: &mut TileState) -> bool {
+    self.wait_time += delta_time;
+
+    if self.wait_time > MOVING_PERIOD {
+      if clicked {
+        self.update_board(x, y, clicked, player);
+        return true
+      }
+    }
+    false
+  }
+
+  fn update_board(&mut self, x: f32, y: f32, clicked: bool, player: &mut TileState) {
+    self.board.update(x, y, clicked, player)
   }
 }

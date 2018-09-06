@@ -19,6 +19,7 @@ pub struct Board {
   rows: i32,
   cols: i32,
   tiles: HashMap<String, Tile>,
+  // tiles: [Tile; 4],
   tile_size: f32,
 }
 
@@ -74,7 +75,8 @@ impl Board {
   //   }
   // }
 
-  pub fn draw(&mut self, con: &Context, g: &mut G2d, x: f32, y: f32, clicked: bool, player: &mut TileState) -> bool {
+  pub fn draw(&mut self, con: &Context, g: &mut G2d) {
+    // , x: f32, y: f32, clicked: bool, player: &mut TileState
     rectangle(
       BOARD_COLOR,
       [
@@ -89,20 +91,27 @@ impl Board {
 
     for (_key, tile) in &mut self.tiles {
       tile.draw(&con, g);
-      if clicked {
-        if 
-          (x / self.tile_size) as f64 / GAME_SIZE > tile.row as f64
-          && (x / self.tile_size) as f64 / GAME_SIZE < (tile.row + 1) as f64
-          && (y / self.tile_size) as f64 / GAME_SIZE > tile.col as f64
-          && (y / self.tile_size) as f64 / GAME_SIZE < (tile.col + 1) as f64
-          {
-          let updated = tile.clicked(player);
-          // self.check_win(player);
-          return updated;
-        }
+    }
+  }
+
+  pub fn update(&mut self, x: f32, y: f32, clicked: bool, player: &mut TileState) {
+    let key = format!("{}:{}", ((x / self.tile_size) as f64 / GAME_SIZE) as i32, ((y / self.tile_size) as f64 / GAME_SIZE) as i32);
+    println!("{}", key);
+
+
+    if self.tiles.contains_key(&key) && clicked {
+      let tile = self.tiles.get_mut(&key).unwrap();
+      if 
+        (x / self.tile_size) as f64 / GAME_SIZE > tile.row as f64
+        && (x / self.tile_size) as f64 / GAME_SIZE < (tile.row + 1) as f64
+        && (y / self.tile_size) as f64 / GAME_SIZE > tile.col as f64
+        && (y / self.tile_size) as f64 / GAME_SIZE < (tile.col + 1) as f64
+        {
+        // let updated = tile.clicked(player);
+        // self.check_win(player);
+        // return updated;
+        tile.clicked(player);
       }
     }
-
-    false
   }
 }

@@ -30,31 +30,45 @@ fn main() {
   let mut y = 0.0;
   let mut player = TileState::Player1;
 
-  while let Some(e) = window.next() {
-    if let Some(pos) = e.mouse_cursor_args() {
-      // println!("{:?}", pos);
-      x = pos[0] as f32;
-      y = pos[1] as f32;
+  while let Some(event) = window.next() {
+    if let Some(pos) = event.mouse_cursor_args() {
+      if !clicked {
+        // println!("{:?}", pos);
+        x = pos[0] as f32;
+        y = pos[1] as f32;
+      }
     };
 
-    if let Some(button) = e.press_args() {
+    if let Some(button) = event.press_args() {
       if button == Button::Mouse(MouseButton::Left) {
         clicked = true;
         // println!("{}, {}", x, y);
       }
     };
 
-    window.draw_2d(&e, |c, g| {
+    window.draw_2d(&event, |c, g| {
       clear(CLEAR_COLOR, g);
-      if game.draw(&c, g, x, y, clicked, &mut player) {
+      game.draw(&c, g);
+    });
+
+    event.update(|arg| {
+      if game.update(arg.dt, x, y, clicked, &mut player) {
+        clicked = false;
         player = match player {
           TileState::Player1 => TileState::Player2,
           TileState::Player2 => TileState::Player1,
           _ => TileState::Player1,
         };
-        clicked = false;
       }
+      // clicked = false;
+      //  {
+      //   player = match player {
+      //     TileState::Player1 => TileState::Player2,
+      //     TileState::Player2 => TileState::Player1,
+      //     _ => TileState::Player1,
+      //   };
+      //   clicked = false;
+      // }
     });
-
   }
 }
