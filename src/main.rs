@@ -54,21 +54,12 @@ fn main() {
     event.update(|arg| {
       if game.update(arg.dt, x, y, clicked, &mut player) {
         clicked = false;
-        player = match player {
-          TileState::Player1 => TileState::Player2,
-          TileState::Player2 => TileState::Player1,
-          _ => TileState::Player1,
-        };
+        match player {
+          TileState::Player1 => player = TileState::Player2,
+          TileState::Player2 => player = TileState::Player1,
+          _ =>(),
+        }
       }
-      // clicked = false;
-      //  {
-      //   player = match player {
-      //     TileState::Player1 => TileState::Player2,
-      //     TileState::Player2 => TileState::Player1,
-      //     _ => TileState::Player1,
-      //   };
-      //   clicked = false;
-      // }
     });
   }
 }

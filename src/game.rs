@@ -84,6 +84,7 @@ impl Game {
   }
 
   fn update_board(&mut self, x: f32, y: f32, clicked: bool, player: &mut TileState) {
-    self.board.update(x, y, clicked, player)
+    self.board.update(x, y, clicked, player);
+    self.board.check_win(player);
   }
 }

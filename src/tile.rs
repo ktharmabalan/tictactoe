@@ -1,6 +1,7 @@
 use piston_window::{rectangle, Context, G2d};
 use piston_window::types::Color;
 
+// use std::cmp;
 use game::GAME_SIZE;
 
 const TILE_COLOR: Color = [(15.0/255.0), (20.0/255.0), (45.0/255.0), 1.0];
@@ -14,6 +15,13 @@ pub enum TileState {
   Player2,
 }
 
+impl PartialEq for TileState {
+  fn eq(&self, tile_state: &TileState) -> bool {
+    self == tile_state
+  }
+}
+
+#[derive(PartialEq)]
 pub struct Tile {
   pub row: i32,
   pub col: i32,
@@ -36,7 +44,6 @@ impl Tile {
   }
 
   pub fn clicked(&mut self, player: &TileState) {
-    println!("UPDATED");
     match self.tile_state {
       TileState::None => {
         self.clicked = true;
